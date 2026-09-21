@@ -75,7 +75,7 @@ export function normalizeRecordingStatus(status: string | undefined): RecordingS
 export function sourceRevisionFromEnvironment(
   env: Record<string, string | undefined> = process.env,
 ): string | undefined {
-  return env.GITHUB_SHA || env.GIT_COMMIT || undefined;
+  return env.GUIDE_APP_REVISION || env.GITHUB_SHA || env.GIT_COMMIT || undefined;
 }
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
