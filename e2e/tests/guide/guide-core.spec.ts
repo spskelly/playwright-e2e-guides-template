@@ -85,6 +85,7 @@ test.describe('guide core characterization', () => {
   });
 
   test('reads source revision only from documented CI variables', () => {
+    expect(sourceRevisionFromEnvironment({ GUIDE_APP_REVISION: 'guide-revision', GITHUB_SHA: 'github-revision' })).toBe('guide-revision');
     expect(sourceRevisionFromEnvironment({ GITHUB_SHA: 'github-revision', GIT_COMMIT: 'generic-revision' })).toBe('github-revision');
     expect(sourceRevisionFromEnvironment({ GIT_COMMIT: 'generic-revision' })).toBe('generic-revision');
     expect(sourceRevisionFromEnvironment({})).toBeUndefined();

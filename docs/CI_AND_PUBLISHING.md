@@ -5,7 +5,7 @@ Testing and publication are separate trust boundaries.
 ## Test workflow
 
 .github/workflows/test.yml runs on pushes and pull requests. It installs locked
-dependencies, installs Chromium, typechecks, runs the 30 guide contracts, runs
+dependencies, installs Chromium, typechecks, runs the 32 guide contracts, runs
 the synthetic application suite, and runs the documented journey in fast mode.
 Playwright evidence is uploaded only when a failure needs diagnosis.
 
@@ -22,6 +22,9 @@ cannot publish before review. Once enabled, the workflow:
 4. Verifies every public link and required asset.
 5. Uploads only guides-site as the Pages artifact.
 6. Deploys only from main through the protected github-pages environment.
+
+The workflow sets `GUIDE_APP_REVISION` to the source commit. The recorder stores
+that value in each manifest and the built guide index for provenance.
 
 Failed checkpoints and Playwright evidence are diagnostic. They are not placed
 in the Pages artifact.
