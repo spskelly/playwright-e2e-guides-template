@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { localGuideUrl, stripPublicationBasePath } from './guide-site-routing.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = path.join(ROOT, 'guides-site');
@@ -17,10 +18,14 @@ function openBrowser(url) {
 }
 
 if (!existsSync(SITE)) throw new Error(`guide site does not exist: ${SITE}; run npm run guides:build first`);
+const guideIndex = JSON.parse(readFileSync(path.join(SITE, 'guides.json'), 'utf8'));
+const basePath = guideIndex.basePath || '/';
 const port = Number(process.env.GUIDES_PORT || 4173);
 const server = createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url || '/', 'http://localhost').pathname);
-  const requested = path.resolve(SITE, `.${pathname}`);
+  const sitePathname = stripPublicationBasePath(pathname, basePath);
+  if (sitePathname === null) { response.writeHead(404).end('Not found'); return; }
+  const requested = path.resolve(SITE, `.${sitePathname}`);
   const relative = path.relative(SITE, requested);
   if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
     response.writeHead(403).end('Forbidden'); return;
@@ -33,7 +38,7 @@ const server = createServer((request, response) => {
 });
 
 server.listen(port, '127.0.0.1', () => {
-  const url = `http://127.0.0.1:${port}/`;
+  const url = localGuideUrl(port, basePath);
   console.log(`[guides] serving ${SITE} at ${url}`);
   if (!process.argv.includes('--no-open')) openBrowser(url);
 });

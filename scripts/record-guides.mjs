@@ -103,6 +103,10 @@ export function replaceCheckpoint(stagingRoot, temporaryDirectory, slug) {
   return finalDirectory;
 }
 
+export function normalizePlaywrightPath(value) {
+  return value.replaceAll('\\', '/');
+}
+
 function findRecordedVideo(manifest, root) {
   const candidates = [
     manifest.outputDir && path.join(manifest.outputDir, 'video.webm'),
@@ -121,7 +125,7 @@ function findRecordedVideo(manifest, root) {
 
 function runPlaywrightUnit(unit, temporaryRoot, root) {
   const cli = path.join(root, 'node_modules', '@playwright', 'test', 'cli.js');
-  const relativeWorkflow = path.relative(root, unit.file);
+  const relativeWorkflow = normalizePlaywrightPath(path.relative(root, unit.file));
   const args = [cli, 'test', relativeWorkflow, '--project=guides', '--workers=1'];
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, args, {
