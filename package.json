@@ -1,0 +1,28 @@
+{
+  "name": "playwright-e2e-guides-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A standalone Playwright template for tested workflows and publishable user guides.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "install:browsers": "playwright install chromium",
+    "test": "npm run test:contracts && npm run test:app && npm run test:journey",
+    "test:contracts": "playwright test --project=contracts --workers=1",
+    "test:app": "playwright test --project=example-app",
+    "test:smoke": "playwright test e2e/tests/app/smoke.spec.ts --project=example-app",
+    "test:journey": "playwright test --project=journeys",
+    "guides:record": "node scripts/record-guides.mjs",
+    "guides:build": "node scripts/build-guides.mjs",
+    "guides:verify": "node scripts/verify-guides.mjs",
+    "guides:open": "node scripts/open-guides.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@types/node": "20.19.24",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "generatorVersion": "1.0.0",
+  "slug": "create-project-task",
+  "title": "Create a project task",
+  "description": "Add a synthetic task to an example project.",
+  "audience": "Template evaluators",
+  "estimatedMinutes": 4,
+  "tags": ["synthetic", "tasks"],
+  "project": "guides",
+  "specFile": "e2e/journeys/create-task.workflow.ts",
+  "startedAt": "2026-09-21T12:00:00.000Z",
+  "finishedAt": "2026-09-21T12:00:42.000Z",
+  "durationMs": 42000,
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "outputDir": "",
+  "videoPath": "",
+  "steps": [
+    {
+      "index": 1,
+      "title": "Open the project",
+      "note": "Start from the synthetic task dashboard.",
+      "screenshot": "01-open-the-project.png",
+      "url": "https://example.test/dashboard",
+      "startedAt": "2026-09-21T12:00:01.000Z",
+      "durationMs": 3000
+    },
+    {
+      "index": 2,
+      "title": "Review the results",
+      "note": "Confirm the synthetic task appears in the list.",
+      "screenshot": "02-review-the-results.png",
+      "url": "https://example.test/dashboard?view=tasks",
+      "startedAt": "2026-09-21T12:00:04.000Z",
+      "durationMs": 5000
+    }
+  ],
+  "status": "passed",
+  "publishable": true,
+  "validationErrors": []
+}

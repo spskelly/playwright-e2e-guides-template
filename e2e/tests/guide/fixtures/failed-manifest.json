@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "generatorVersion": "1.0.0",
+  "slug": "failed-task",
+  "title": "Failed task creation",
+  "description": "Diagnostic evidence from an incomplete recording.",
+  "audience": "Maintainers",
+  "estimatedMinutes": 2,
+  "tags": ["diagnostic"],
+  "project": "guides",
+  "specFile": "e2e/journeys/create-task.workflow.ts",
+  "startedAt": "2026-09-21T12:00:00.000Z",
+  "finishedAt": "2026-09-21T12:00:03.000Z",
+  "durationMs": 3000,
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "outputDir": "",
+  "steps": [
+    {
+      "index": 1,
+      "title": "Open the project",
+      "url": "https://example.test/dashboard",
+      "startedAt": "2026-09-21T12:00:01.000Z",
+      "durationMs": 2000
+    }
+  ],
+  "status": "failed",
+  "publishable": false,
+  "validationErrors": ["recording status must be passed"]
+}

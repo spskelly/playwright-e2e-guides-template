@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "productName": "Example Workspace",
+  "siteName": "Example Workspace guides",
+  "siteDescription": "Synthetic walkthroughs generated from the same Playwright journeys used for regression testing.",
+  "outputDirectory": "guides-site",
+  "stagingDirectory": ".guide-work",
+  "locale": "en-US",
+  "captions": {
+    "background": "rgba(17,24,39,0.94)",
+    "foreground": "#f9fafb",
+    "muted": "#d1d5db",
+    "accent": "#f59e0b",
+    "bottomPx": 28
+  },
+  "strictRecordingDefault": false,
+  "allowedUrlQueryParameters": ["view"],
+  "defaultScreenshotMasks": [
+    "input[type=email]",
+    "input[type=password]",
+    "[data-guide-mask]"
+  ],
+  "publicationBasePath": "/playwright-e2e-guides-template/"
+}

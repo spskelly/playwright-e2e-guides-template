@@ -1,0 +1,15 @@
+node_modules/
+test-results/
+playwright-report/
+.guide-work/
+guides-site/
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+dist/
+coverage/
+*.log
