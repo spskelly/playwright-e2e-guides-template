@@ -14,6 +14,16 @@ type BuilderModule = {
 
 const dynamicImport = new Function('specifier', 'return import(specifier)') as (specifier: string) => Promise<any>;
 const E2E_ROOT = path.resolve(__dirname, '../../..');
+const ORIGINAL_GUIDE_APP_REVISION = process.env.GUIDE_APP_REVISION;
+
+test.beforeAll(() => {
+  process.env.GUIDE_APP_REVISION = 'test-revision';
+});
+
+test.afterAll(() => {
+  if (ORIGINAL_GUIDE_APP_REVISION === undefined) delete process.env.GUIDE_APP_REVISION;
+  else process.env.GUIDE_APP_REVISION = ORIGINAL_GUIDE_APP_REVISION;
+});
 
 async function modules(): Promise<{ recorder: RecorderModule; builder: BuilderModule }> {
   const recorder = await dynamicImport(pathToFileURL(path.join(E2E_ROOT, 'scripts', 'record-guides.mjs')).href);
@@ -53,7 +63,7 @@ async function checkpoint(root: string, input: string, definition: { file: strin
   const manifest = {
     schemaVersion: 1,
     generatorVersion: '1.0.0',
-    fingerprint: recorder.computeUnitFingerprint(unit, { root }),
+    fingerprint: recorder.computeUnitFingerprint(unit, { root, revision: 'test-revision' }),
     slug: definition.slug,
     title: `Guide ${definition.slug}`,
     description: 'A synthetic guide description.',
