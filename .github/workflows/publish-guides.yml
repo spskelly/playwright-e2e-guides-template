@@ -1,0 +1,105 @@
+name: Publish guides
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'e2e/app/**'
+      - 'e2e/guide/**'
+      - 'e2e/journeys/**'
+      - 'e2e/pages/**'
+      - 'scripts/**'
+      - 'guide.config.json'
+      - 'package-lock.json'
+      - 'playwright.config.ts'
+
+concurrency:
+  group: pages-${{ github.repository }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Record and verify guide site
+    if: vars.ENABLE_GUIDE_PAGES == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      GUIDE_RUN_ID: pages-${{ github.run_id }}-${{ github.run_attempt }}
+      GUIDE_APP_REVISION: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Install Chromium and ffmpeg
+        run: |
+          npx playwright install --with-deps chromium
+          sudo apt-get update -y
+          sudo apt-get install -y ffmpeg
+      - name: Preview guide inventory and resume state
+        run: npm run guides:record -- --list
+      - name: Record or resume synthetic guides
+        run: npm run guides:record
+      - name: Build static guide site
+        env:
+          GUIDES_GIF: '1'
+        run: npm run guides:build
+      - name: Verify static guide site
+        run: npm run guides:verify
+      - name: Summarize publication candidate
+        shell: bash
+        run: |
+          GUIDE_COUNT="$(node -p "require('./guides-site/guides.json').guides.length")"
+          ARTIFACT_BYTES="$(du -sb guides-site | cut -f1)"
+          {
+            echo "### Guide publication candidate"
+            echo ""
+            echo "- Repository: ${{ github.repository }}"
+            echo "- Revision: ${{ github.sha }}"
+            echo "- Guide count: $GUIDE_COUNT"
+            echo "- Artifact bytes: $ARTIFACT_BYTES"
+            echo "- Proposed URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload verified Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: guides-site
+      - name: Upload failed checkpoints
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: guide-checkpoints-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .guide-work/
+          retention-days: 7
+      - name: Upload failed Playwright evidence
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: guide-playwright-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  deploy:
+    name: Deploy verified guide site
+    if: vars.ENABLE_GUIDE_PAGES == 'true' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

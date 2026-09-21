@@ -12,7 +12,9 @@ Playwright evidence is uploaded only when a failure needs diagnosis.
 ## Publication workflow
 
 .github/workflows/publish-guides.yml runs on manual dispatch and qualifying
-pushes to main. It:
+pushes to main only when the repository variable ENABLE_GUIDE_PAGES is true.
+The variable is deliberately absent at repository creation so the first push
+cannot publish before review. Once enabled, the workflow:
 
 1. Prints the guide inventory and checkpoint location.
 2. Records each incomplete synthetic guide.
@@ -42,4 +44,9 @@ Before the first deployment, record:
 - proposed Pages URL
 
 Review the site locally and wait for owner approval before enabling or
-dispatching Pages.
+dispatching Pages. After approval, create the repository variable with:
+
+    gh variable set ENABLE_GUIDE_PAGES --body true
+
+Then dispatch Publish guides from GitHub Actions. Removing the variable or
+setting it to false disables both automatic and manual publication jobs.
