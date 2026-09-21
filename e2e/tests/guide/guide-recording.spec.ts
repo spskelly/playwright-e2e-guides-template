@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url';
 type Unit = { name: string; file: string; slug: string };
 type RecorderModule = {
   discoverWorkflowUnits: (root?: string) => Unit[];
+  normalizePlaywrightPath: (value: string) => string;
   computeUnitFingerprint: (unit: Unit, options?: { root?: string; revision?: string }) => string;
   validateCheckpoint: (directory: string, fingerprint: string) => string[];
   replaceCheckpoint: (stagingRoot: string, temporaryDirectory: string, slug: string) => string;
@@ -31,6 +32,13 @@ function createSyntheticRoot(root: string, workflows: Record<string, string>): v
 }
 
 test.describe('guide recording orchestration', () => {
+  test('normalizes Windows paths before passing them to Playwright', async () => {
+    const recorder = await loadRecorder();
+
+    expect(recorder.normalizePlaywrightPath('e2e\\journeys\\create-task.workflow.ts'))
+      .toBe('e2e/journeys/create-task.workflow.ts');
+  });
+
   test('discovers one declared guide per workflow file in stable order', async ({}, testInfo) => {
     const root = testInfo.outputPath('app');
     createSyntheticRoot(root, {
